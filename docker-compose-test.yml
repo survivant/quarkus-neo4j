@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  neo4j:
+    image: bitnami/neo4j:latest
+    hostname: neo4j
+    ports:
+      - "7474:7474"
+      - "7473:7473"
+      - "7687:7687"
+    volumes:
+      - ./neo4j/plugins:/plugins
+      - ./neo4j/logs:/logs
+    environment:
+      NEO4J_AUTH: neo4j/secret
+      NEO4J_PASSWORD: secret
+      NEO4J_dbms_logs_debug_level: DEBUG
+      NEO4J_HOST: localhost
+
+  quarkus:
+      image: quarkus/neo4j-quickstart-jvm:latest
+      ports:
+        - 8080:8080
+      depends_on:
+        - neo4j
+      hostname: quarkus
+
+       
+    
+
+
