@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  twin-neo4j:
+    image: bitnami/neo4j:latest
+    hostname: twin-neo4j
+    ports:
+      - "7474:7474"
+      - "7473:7473"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/twin
+      NEO4J_PASSWORD: twin
+      NEO4J_dbms_logs_debug_level: DEBUG
+      NEO4J_HOST: localhost
+
+  twin-api-service:
+      image: twin-api-wait-for-it:latest
+      ports:
+        - 8080:8080
+      environment:
+            - "SPRING_PROFILES_ACTIVE=kubernetes,production"
+      entrypoint: ["./wait-for-it.sh","twin-neo4j:7687","--timeout=0","--strict", "--", "java","-jar","app.jar" ]
+      links:
+        - twin-neo4j
+      depends_on:
+        - twin-neo4j
+      hostname: twin
+
+       
+    
+
+
